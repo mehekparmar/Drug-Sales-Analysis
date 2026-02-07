@@ -1,0 +1,37 @@
+import pandas as pd
+import numpy as np
+from faker import Faker
+
+fake = Faker()
+
+drugs = {
+    'Paracetamol': 'N02BE01',
+    'Ibuprofen': 'M01AE01',
+    'Amoxicillin': 'J01CA04',
+    'Amlodipine': 'C08CA01',
+    'Metformin': 'A10BA02',
+    'Omeprazole': 'A02BC01',
+    'Simvastatin': 'C10AA01',
+    'Losartan': 'C09CA01'
+}
+
+maharashtra_cities = ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad', 'Solapur', 'Kolhapur', 'Amravati', 'Jalgaon', 'Latur']
+
+def generate_sales_data(years, num_records):
+    data = []
+    for _ in range(num_records):
+        year = np.random.choice(years)
+        drug = np.random.choice(list(drugs.keys()))
+        atc_code = drugs[drug]
+        sales_volume = np.random.randint(1000, 5000)
+        unit_price = np.random.uniform(10, 100)
+        sales_value = sales_volume * unit_price
+        region = np.random.choice(maharashtra_cities)  # Select from Maharashtra cities
+        month = np.random.choice(pd.date_range('2020-01-01', '2020-12-31', freq='M').strftime('%B'))
+        data.append([year, drug, atc_code, sales_volume, sales_value, region, month])
+    return pd.DataFrame(data, columns=['Year', 'Drug', 'ATC Code', 'Sales Volume', 'Sales Value (INR)', 'Region', 'Month'])
+
+years = [2020, 2021, 2022, 2023, 2024]
+df = pd.concat([generate_sales_data(years, np.random.randint(5000, 10000)) for _ in years], ignore_index=True)
+
+df.to_csv('synthetic_pharma_sales_maharashtra.csv', index=False)
